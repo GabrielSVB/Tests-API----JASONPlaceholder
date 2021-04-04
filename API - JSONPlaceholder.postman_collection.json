@@ -1,0 +1,792 @@
+{
+	"info": {
+		"_postman_id": "2b52fd52-af92-437e-a7ee-183edd00680f",
+		"name": "API - JSONPlaceholder",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Tests",
+			"item": [
+				{
+					"name": "GET",
+					"item": [
+						{
+							"name": "Validation response body",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Validation header\r",
+											"\r",
+											"pm.test(\"Content-Type is present\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"});\r",
+											"\r",
+											"//Validation body response\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Number of placesholder equal to 100\", function () {\r",
+											"    const responseJson = pm.response.json();\r",
+											"    pm.expect(responseJson.length).to.equal(100);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validate type of body information\", function () {\r",
+											"    var data = JSON.parse(responseBody);\r",
+											"    data.forEach(function(item) {\r",
+											"      pm.expect(item).to.have.all.keys('userId', 'id', 'title', 'body'); \r",
+											"  });\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check 10 post from each user\", function () {\r",
+											"     var userPostQnt = {user1:0, user2:0, user3:0, user4:0, user5:0, \r",
+											"                       user6:0, user7:0, user8:0, user9:0, user10:0};\r",
+											"                       \r",
+											"    for (var i = 0; i < 10; i++){\r",
+											"        for(var post in pm.response.json()){\r",
+											"            if(post.userId == i + 1){\r",
+											"                userPostQnt[i] += 1;\r",
+											"            }\r",
+											"        }\r",
+											"    }   \r",
+											"    for(var postQnt in userPostQnt){\r",
+											"        if(postQnt < 10){\r",
+											"            return false;\r",
+											"        }\r",
+											"    }\r",
+											"    return true;\r",
+											"   \r",
+											"});\r",
+											"\r",
+											"pm.test('Check title of userId=1 post id=1', function () {\r",
+											"    for(var post of pm.response.json()){\r",
+											"        if(post.id === 1){\r",
+											"            pm.expect(post.title).to.eql(\"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\");\r",
+											"            return true;\r",
+											"        }\r",
+											"    }\r",
+											"    return false;\r",
+											"});\r",
+											"\r",
+											"pm.test('Check body of userId=1 post id=1', function () {\r",
+											"    for(var post of pm.response.json()){\r",
+											"        if(post.id === 1){\r",
+											"            pm.expect(post.body).to.eql(\"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\");\r",
+											"            return true;\r",
+											"        }\r",
+											"    }\r",
+											"    return false;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_environment}}",
+									"host": [
+										"{{url_environment}}"
+									]
+								},
+								"description": "Request to validate the response code"
+							},
+							"response": []
+						},
+						{
+							"name": "Validate get by userId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Validation body response\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Number of placesholder equal to 10\", function () {\r",
+											"    const responseJson = pm.response.json();\r",
+											"    pm.expect(responseJson.length).to.equal(10);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validate that the userId that is returning is the same as the searched one\", function(){\r",
+											"    var uId = pm.variables.get(\"userId\");\r",
+											"    var jsonData = pm.response.json();\r",
+											"    for(i = 0; i <= 9 ; i ++){\r",
+											"        pm.expect(jsonData[i].userId).to.eql(uId);\r",
+											"    }\r",
+											"    return false;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"userId\", Math.floor(Math.random() * 10) + 1);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_environment}}?userId={{userId}}",
+									"host": [
+										"{{url_environment}}"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										}
+									]
+								},
+								"description": "Request to validate the response code"
+							},
+							"response": []
+						},
+						{
+							"name": "Validate get by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Validation body response\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validate that the id that is returning is the same as the searched one\", function(){\r",
+											"    var id = pm.variables.get(\"id\");\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData[0].id).to.eql(id);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"id\", Math.floor(Math.random() * 100) + 1);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_environment}}?id={{id}}",
+									"host": [
+										"{{url_environment}}"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{id}}"
+										}
+									]
+								},
+								"description": "Request to validate the response code"
+							},
+							"response": []
+						},
+						{
+							"name": "Validate nonexistent userid and id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validate that the body response is empty by sending invalid userId and id\", function () {\r",
+											"    var jsonBody = pm.response.json();\r",
+											"     pm.expect(jsonBody).to.empty;\r",
+											"  });"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"userId\", Math.floor(Math.random() * 11) + 10);\r",
+											"pm.environment.set(\"id\", Math.floor(Math.random() * 200) + 100);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_environment}}/?userId={{userId}}&id={{id}}",
+									"host": [
+										"{{url_environment}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										},
+										{
+											"key": "id",
+											"value": "{{id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validate valid userId and invalid id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validate that the body response is empty by sending valid userId and invalid id\",function (){\r",
+											"    var jsonBody = pm.response.json();\r",
+											"     pm.expect(jsonBody).to.empty;\r",
+											"  });"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"userId\", Math.floor(Math.random() * 10) + 1);\r",
+											"pm.environment.set(\"id\", Math.floor(Math.random() * 200) + 100);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_environment}}/?userId={{userId}}&id={{id}}",
+									"host": [
+										"{{url_environment}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										},
+										{
+											"key": "id",
+											"value": "{{id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validate invalid userId and valid id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validate that the body response is empty by sending invalid userId and valid id\", function(){\r",
+											"    var jsonBody = pm.response.json();\r",
+											"     pm.expect(jsonBody).to.empty;\r",
+											"  });"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"userId\", Math.floor(Math.random() * 11) + 10);\r",
+											"pm.environment.set(\"id\", Math.floor(Math.random() * 100) + 1);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_environment}}/?userId={{userId}}&id={{id}}",
+									"host": [
+										"{{url_environment}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										},
+										{
+											"key": "id",
+											"value": "{{id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validate invalid id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validate that the body response is empty by sending invalid id\", function(){\r",
+											"    var jsonBody = pm.response.json();\r",
+											"     pm.expect(jsonBody).to.empty;\r",
+											"  });"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"id\", Math.floor(Math.random() * 200) + 100);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_environment}}/?id={{id}}",
+									"host": [
+										"{{url_environment}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validate invalid userId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validate that the body response is empty by sending invalid userId\"  , function () {\r",
+											"    var jsonBody = pm.response.json();\r",
+											"     pm.expect(jsonBody).to.empty;\r",
+											"  });"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"userId\", Math.floor(Math.random() * 11) + 11);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_environment}}/?userId={{userId}}",
+									"host": [
+										"{{url_environment}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "POST",
+					"item": [
+						{
+							"name": "Create post successfully",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"userId\", Math.floor(Math.random() * 100) + 1);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201 Created\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Validate the return of the body after a new post\", function (){\r",
+											"    var uId = pm.variables.get(\"userId\");\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.userId).to.eql(uId);\r",
+											"    pm.expect(jsonData.id).to.eql(101);\r",
+											"    pm.expect(jsonData.title).to.eql(\"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\");\r",
+											"    pm.expect(jsonData.body).to.eql(\"Nullam elementum posuere sapien eget sodales. Quisque tempus sapien eget ante vestibulum placerat. Nam eu nibh rutrum, fermentum orci sed, accumsan leo. Cras sapien urna, sollicitudin at lacus et, posuere imperdiet sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque finibus in nunc sit amet pellentesque. Nulla malesuada quis nulla sed viverra.\");  \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\":{{userId}},\r\n    \"id\": 102,\r\n    \"title\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"body\": \"Nullam elementum posuere sapien eget sodales. Quisque tempus sapien eget ante vestibulum placerat. Nam eu nibh rutrum, fermentum orci sed, accumsan leo. Cras sapien urna, sollicitudin at lacus et, posuere imperdiet sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque finibus in nunc sit amet pellentesque. Nulla malesuada quis nulla sed viverra.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url_environment}}",
+									"host": [
+										"{{url_environment}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create post by sending userId as String",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"userId\", Math.random().toString(36).substring(7));"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201 Created\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Validate body response after submitting userId with String\", function (){\r",
+											"    var uId = pm.variables.get(\"userId\");\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.userId).to.eql(uId);\r",
+											"    pm.expect(jsonData.id).to.eql(101);\r",
+											"    pm.expect(jsonData.title).to.eql(\"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\");\r",
+											"    pm.expect(jsonData.body).to.eql(\"Nullam elementum posuere sapien eget sodales. Quisque tempus sapien eget ante vestibulum placerat. Nam eu nibh rutrum, fermentum orci sed, accumsan leo. Cras sapien urna, sollicitudin at lacus et, posuere imperdiet sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque finibus in nunc sit amet pellentesque. Nulla malesuada quis nulla sed viverra.\");  \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\":\"{{userId}}\",\r\n    \"id\": 101,\r\n    \"title\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"body\": \"Nullam elementum posuere sapien eget sodales. Quisque tempus sapien eget ante vestibulum placerat. Nam eu nibh rutrum, fermentum orci sed, accumsan leo. Cras sapien urna, sollicitudin at lacus et, posuere imperdiet sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque finibus in nunc sit amet pellentesque. Nulla malesuada quis nulla sed viverra.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url_environment}}",
+									"host": [
+										"{{url_environment}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create post by sending id as String",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"userId\", Math.floor(Math.random() * 100) + 1);\r",
+											"pm.environment.set(\"id\", Math.random().toString(36).substring(7));"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201 Created\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"//The ID value will always be 101 because it is the value of the next post sequentially\r",
+											"pm.test(\"Validate body response after submitting id with String\", function (){\r",
+											"    var uId = pm.variables.get(\"userId\");\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.userId).to.eql(uId);\r",
+											"    pm.expect(jsonData.id).to.eql(101);\r",
+											"    pm.expect(jsonData.title).to.eql(\"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\");\r",
+											"    pm.expect(jsonData.body).to.eql(\"Nullam elementum posuere sapien eget sodales. Quisque tempus sapien eget ante vestibulum placerat. Nam eu nibh rutrum, fermentum orci sed, accumsan leo. Cras sapien urna, sollicitudin at lacus et, posuere imperdiet sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque finibus in nunc sit amet pellentesque. Nulla malesuada quis nulla sed viverra.\");  \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\":{{userId}},\r\n    \"id\": \"{{id}}\",\r\n    \"title\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"body\": \"Nullam elementum posuere sapien eget sodales. Quisque tempus sapien eget ante vestibulum placerat. Nam eu nibh rutrum, fermentum orci sed, accumsan leo. Cras sapien urna, sollicitudin at lacus et, posuere imperdiet sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque finibus in nunc sit amet pellentesque. Nulla malesuada quis nulla sed viverra.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url_environment}}",
+									"host": [
+										"{{url_environment}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create post by sending title as int",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"title\", Math.floor(Math.random() * 100) + 1);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201 Created\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Validate body response after submitting title with int\", function (){\r",
+											"    var uId = pm.variables.get(\"userId\");\r",
+											"    var title = pm.variables.get(\"title\");\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.userId).to.eql(uId);\r",
+											"    pm.expect(jsonData.id).to.eql(101);\r",
+											"    pm.expect(jsonData.title).to.eql(title);\r",
+											"    pm.expect(jsonData.body).to.eql(\"Nullam elementum posuere sapien eget sodales. Quisque tempus sapien eget ante vestibulum placerat. Nam eu nibh rutrum, fermentum orci sed, accumsan leo. Cras sapien urna, sollicitudin at lacus et, posuere imperdiet sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque finibus in nunc sit amet pellentesque. Nulla malesuada quis nulla sed viverra.\");  \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\":{{userId}},\r\n    \"id\": 101,\r\n    \"title\": {{title}},\r\n    \"body\": \"Nullam elementum posuere sapien eget sodales. Quisque tempus sapien eget ante vestibulum placerat. Nam eu nibh rutrum, fermentum orci sed, accumsan leo. Cras sapien urna, sollicitudin at lacus et, posuere imperdiet sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque finibus in nunc sit amet pellentesque. Nulla malesuada quis nulla sed viverra.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url_environment}}",
+									"host": [
+										"{{url_environment}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create post by sending body as int",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"body\", Math.floor(Math.random() * 100) + 1);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201 Created\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Validate body response after submitting body with int\", function (){\r",
+											"    var uId = pm.variables.get(\"userId\");\r",
+											"    var body = pm.variables.get(\"body\");\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.userId).to.eql(uId);\r",
+											"    pm.expect(jsonData.id).to.eql(101);\r",
+											"    pm.expect(jsonData.title).to.eql(\"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\");\r",
+											"    pm.expect(jsonData.body).to.eql(body);  \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\":{{userId}},\r\n    \"id\": 101,\r\n    \"title\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"body\": {{body}}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url_environment}}",
+									"host": [
+										"{{url_environment}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
